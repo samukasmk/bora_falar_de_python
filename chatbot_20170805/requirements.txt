@@ -1,0 +1,2 @@
+fbchat==1.0.17
+requests==2.18.3
