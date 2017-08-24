@@ -1,0 +1,31 @@
+
+Meios de se enviar informações para um site
+
+Payload é a string completa da mensagem do protocolo
+
+
+# Por metodo GET
+    http://uol.com.br/esportes?campanha=1029&link=2
+
+    # modelo de URL
+    http      :// uol.com.br   /esportes ? campanha=1029&link=2
+    protocolo :// endereço     /caminho  ? parametro = valor
+
+    # pontos negativos: segurança
+    https://uol.com.br/esportes?usuario=samuka&senha=secreta
+
+
+    # exemplo requisição do protocolo
+    GET /esportes?campanha=1029&link=2 HTTP/1.1
+    Host: uol.com.br
+
+
+# Por metodo POST
+    # exemplo requisição do protocolo
+    POST /admin HTTP/1.0
+    Content-Type: application/x-www-form-urlencoded
+    Host: 127.0.0.1
+    name1=value1&name2=value2
+
+
+    
