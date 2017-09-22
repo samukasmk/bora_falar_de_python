@@ -1,0 +1,83 @@
+---
+  - name: Provision the EC2 Instances (maquina-samuka)
+    hosts: local
+    connection: local
+    gather_facts: False
+    tags: provisioning
+
+    vars:
+      instance_name: maquina-samuka
+      instance_type: t2.small
+      security_group: maquina-samuka
+      image: ami-cd0f5cb6 # ubuntu 16.04
+      keypair: borafalardepython
+      region: us-east-1
+      aws_access_key: INSIRA_SUA_CHAVE_AWS_ACCESS_KEY_AQUI
+      aws_secret_key: INSIRA_SUA_CHAVE_AWS_SECRET_ACCESS_KEY_AQUI
+      count: 1
+
+    tasks:
+      - name: Create a security group
+        ec2_group:
+          name: "{{ security_group }}"
+          state: present
+          description: Security Group for (web) REST API
+          region: "{{ region }}"
+          aws_access_key: "{{ aws_access_key }}"
+          aws_secret_key: "{{ aws_secret_key }}"
+          rules:
+            - proto: tcp
+              from_port: 22
+              to_port: 22
+              cidr_ip: 0.0.0.0/0
+            - proto: tcp
+              from_port: 80
+              to_port: 80
+              cidr_ip: 0.0.0.0/0
+            - proto: tcp
+              from_port: 443
+              to_port: 443
+              cidr_ip: 0.0.0.0/0
+          rules_egress:
+            - proto: all
+              cidr_ip: 0.0.0.0/0
+        register: basic_firewall
+
+      - name: Launch the new EC2 Instance
+        ec2:
+          state: present
+          group: "{{ security_group }}"
+          instance_type: "{{ instance_type }}"
+          image: "{{ image }}"
+          wait: true
+          region: "{{ region }}"
+          keypair: "{{ keypair }}"
+          count: "{{ count }}"
+          aws_access_key: "{{ aws_access_key }}"
+          aws_secret_key: "{{ aws_secret_key }}"
+        register: ec2
+
+      - name: Add the newly created EC2 instance to the local host group
+        lineinfile:
+          dest: ./hosts
+          regexp: "{{ item.public_ip }}"
+          insertafter: "[web]"
+          line: "{{ item.public_ip }}"
+        with_items: "{{ ec2.instances }}"
+
+      - name: Wait for SSH to come up
+        wait_for:
+          host: "{{ item.public_ip }}"
+          port: 22
+          state: started
+        with_items: "{{ ec2.instances }}"
+
+      - name: Add tag to Instance(s)
+        ec2_tag:
+          resource: "{{ item.id }}"
+          region: "{{ region }}"
+          state: present
+        with_items: "{{ ec2.instances }}"
+        args:
+          tags:
+            Name: "{{ instance_name }}"

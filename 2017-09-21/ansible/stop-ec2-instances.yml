@@ -1,0 +1,24 @@
+---
+  - name: Provision the EC2 Instances (maquina-samuka)
+    hosts: local
+    connection: local
+    gather_facts: False
+    tags: provisioning
+
+    vars:
+      instance_name: maquina-samuka
+      instance_type: t2.small
+      security_group: maquina-samuka
+      image: ami-cd0f5cb6 # ubuntu 16.04
+      keypair: borafalardepython
+      region: us-east-1
+      aws_access_key: INSIRA_SUA_CHAVE_AWS_ACCESS_KEY_AQUI
+      aws_secret_key: INSIRA_SUA_CHAVE_AWS_SECRET_ACCESS_KEY_AQUI
+      count: 1
+
+    tasks:
+      - name: Launch the new EC2 Instance
+        ec2:
+          tags:
+            name: "{{ instance_name }}"
+          state: stoped
