@@ -1,0 +1,4 @@
+jupyter
+rows[html]
+pandas
+numpy
