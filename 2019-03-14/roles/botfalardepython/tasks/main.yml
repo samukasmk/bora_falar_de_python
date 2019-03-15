@@ -1,0 +1,25 @@
+---
+# tasks file for botfalardepython
+
+- name: Cria usuário João Ninguém
+  user:
+    name: "{{ app_user }}"
+    comment: joao ninguem
+  become: yes
+
+- name: Create a Directory for Tanaka
+  file:
+    path: "{{ app_folder }}"
+    state: directory
+    mode: 0755
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+  become: yes
+
+- name: Clone repository
+  git:
+    repo: "{{ app_repo }}"
+    dest: "{{ app_folder }}"
+    version: "{{ app_version }}"
+  become: yes
+

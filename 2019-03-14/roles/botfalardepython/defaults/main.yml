@@ -1,0 +1,7 @@
+---
+# defaults file for botfalardepython
+
+app_user: joao
+app_repo: 'https://github.com/yrosaguiar/botfalardepython.git'
+app_folder: "/home/{{ app_user}}/app/"
+app_version: master

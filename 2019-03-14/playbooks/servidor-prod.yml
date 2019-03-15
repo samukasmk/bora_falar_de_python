@@ -1,0 +1,13 @@
+---
+- hosts: prod
+  user: ubuntu
+  become_user: root
+  gather_facts: true
+  vars: 
+    app_user: borapython
+  tasks:
+    - name: Deploy da aplicacao botfalardepython
+      include_role:
+        name: botfalardepython
+      vars:
+        app_version: master
